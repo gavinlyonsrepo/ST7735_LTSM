@@ -32,6 +32,9 @@
 #ifdef dislib16_ADVANCED_SCREEN_BUFFER_ENABLE
 #pragma message("gll: dislib16_ADVANCED_SCREEN_BUFFER_ENABLE is defined. This example is not for that mode")
 #endif
+#ifndef dislib16_ADVANCED_GRAPHICS_ENABLE
+#pragma message("gll: dislib16_ADVANCED_GRAPHICS_ENABLE is not defined. it is required for this demo: test 905-910")
+#endif
 
 ST7735_LTSM myTFT;
 bool bhardwareSPI = true; // true for hardware spi, false for software

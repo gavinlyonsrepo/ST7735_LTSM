@@ -68,7 +68,9 @@ There are 7 example files included.
 | GRAPHICS| Graphics | dislib16 ADVANCED GRAPHICS ENABLE must be enabled for all tests to work|
 | FUNCTIONS FPS| Functions(like rotate, scroll) + FPS tests| --- |
 | BITMAP| 1,8 & 16 bit bitmaps tests + bitmap FPS tests| Bitmap test data is stored in arrays |
-| DEMO| A demo showing a gauge | dislib16 ADVANCED GRAPHICS ENABLE must be enabled |
+| DEMOS| A demo showing a round coloured gauge | dislib16 ADVANCED GRAPHICS ENABLE must be enabled |
+| DEMOS_2| Simulated voltmeter with gradient color gauge |  |
+| DEMOS_3| Vertical Gauges based on sin(x), cos(x), & sin(x)*cos(x). Updates over time to create a dynamic effect.|  |
 | FRAME BUFFER | Testing frame Buffer mode | dislib16 ADVANCED SCREEN BUFFER ENABLE must be enabled user option 2 |
 
 ### SPI

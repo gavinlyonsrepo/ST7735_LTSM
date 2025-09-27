@@ -1,8 +1,8 @@
 /*!
 	@file   BITMAP.ino
 	@author Gavin Lyons
-	@brief  Example ino file for st7735 bitmap tests + FPS bitmap test. a
-	@details Arduino libray ST7735_LTSM library. See USER OPTIONS 1-3 in SETUP function  
+	@brief  Example ino file for st7735 bitmap tests + FPS bitmap test.
+	@details Arduino library ST7735_LTSM. See USER OPTIONS 1-3 in SETUP function  
 	@test
 		-# Test 300 Sprite 
 		-# Test 301 icons
