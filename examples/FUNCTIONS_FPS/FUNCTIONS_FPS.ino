@@ -59,7 +59,7 @@ void setup(void) {
 	myTFT.TFTInitScreenSize(OFFSET_COL, OFFSET_ROW, TFT_WIDTH, TFT_HEIGHT);
 	// ******************************************
 	// ******** USER OPTION 3 PCB_TYPE  **************************
-	myTFT.TFTInitPCBType(myTFT.TFT_ST7735R_Red);  // pass enum,4 choices,see README
+	myTFT.TFTInitPCBType(myTFT.TFT_ST7735R_Red);  // pass enum,multi choices,see README
 	//**********************************************************
 }
 

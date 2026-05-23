@@ -238,6 +238,101 @@ if (_hardwareSPI == false)
 }
 
 /*!
+	@brief   Init routine for ST7735S 80x160 display (BOE / HSD panel variant).
+	@details Sourced from buydisplay.com reference init (ST7735S_S5P_80160).
+	         MADCTL = 0xC8 (MY | MX | BGR). No software reset; starts at SLPOUT.
+	         Rotation uses BGR order, same as Red/Green tab.
+*/
+void ST7735_LTSM::TFTST7735S80160Initialize()
+{
+	TFTResetPIN();
+	DISPLAY16_DC_SetLow;
+	DISPLAY16_DC_SetDigitalOutput;
+	DISPLAY16_CS_SetHigh;
+	DISPLAY16_CS_SetDigitalOutput;
+	if (_hardwareSPI == false)
+	{
+		DISPLAY16_SCLK_SetLow;
+		DISPLAY16_SDATA_SetLow;
+		DISPLAY16_SCLK_SetDigitalOutput;
+		DISPLAY16_SDATA_SetDigitalOutput;
+	} else {
+		TFTSPIInitialize();
+	}
+	Scmd();
+	TFT_PCBtype = TFT_ST7735S_80160;
+}
+
+/*!
+	@brief   Init sub-routine for ST7735S 80x160 (BOE / HSD panel).
+	@details Translates the buydisplay.com reference sequence for the
+	         ST7735S_S5P_80160 panel. No software reset is issued;
+	         the hardware reset from TFTResetPIN() is sufficient.
+	         Frame rate registers use 0x3C (61 Hz) for all modes.
+	         MADCTL 0xC8 = MY | MX | BGR.
+*/
+void ST7735_LTSM::Scmd()
+{
+	uint8_t seqE0[] {0x05, 0x1A, 0x0B, 0x15, 0x3D, 0x38, 0x2E,
+	                 0x30, 0x2D, 0x28, 0x30, 0x3B, 0x00, 0x01, 0x02, 0x10};
+	uint8_t seqE1[] {0x05, 0x1A, 0x0B, 0x15, 0x36, 0x2E, 0x28,
+	                 0x2B, 0x2B, 0x28, 0x30, 0x3B, 0x00, 0x01, 0x02, 0x10};
+
+	writeCommand(ST7735_SLPOUT);        // Sleep out — no SWRESET for this panel
+	MILLISEC_DELAY(120);
+
+	writeCommand(ST7735_FRMCTR1);       // Frame rate: Normal mode (0x3C = 61 Hz)
+	writeData(0x05);
+	writeData(0x3C);
+	writeData(0x3C);
+	writeCommand(ST7735_FRMCTR2);       // Frame rate: Idle mode
+	writeData(0x05);
+	writeData(0x3C);
+	writeData(0x3C);
+	writeCommand(ST7735_FRMCTR3);       // Frame rate: Partial mode (two sets)
+	writeData(0x05);
+	writeData(0x3C);
+	writeData(0x3C);
+	writeData(0x05);
+	writeData(0x3C);
+	writeData(0x3C);
+
+	writeCommand(ST7735_INVCTR);        // Display inversion: dot inversion (0x03)
+	writeData(0x03);
+
+	writeCommand(ST7735_PWCTR1);        // Power control 1: GVDD
+	writeData(0x0E);
+	writeData(0x0E);
+	writeData(0x04);
+	writeCommand(ST7735_PWCTR2);        // Power control 2: VGH/VGL
+	writeData(0xC0);
+	writeCommand(ST7735_PWCTR3);        // Power control 3: Normal mode op-amp
+	writeData(0x0D);
+	writeData(0x00);
+	writeCommand(ST7735_PWCTR4);        // Power control 4: Partial mode op-amp
+	writeData(0x8D);
+	writeData(0x2A);
+	writeCommand(ST7735_PWCTR5);        // Power control 5: Partial+idle op-amp
+	writeData(0x8D);
+	writeData(0xEE);
+
+	writeCommand(ST7735_VMCTR1);        // VCOM control
+	writeData(0x04);
+	writeCommand(ST7735_MADCTL);        // Memory access control: MY | MX | BGR
+	writeData(0xC8);
+	writeCommand(ST7735_COLMOD);        // Pixel format: 16-bit RGB565
+	writeData(0x05);
+
+	writeCommand(ST7735_GMCTRP1);       // Positive gamma correction
+	spiWriteDataBuffer(seqE0, sizeof(seqE0));
+	writeCommand(ST7735_GMCTRN1);       // Negative gamma correction
+	spiWriteDataBuffer(seqE1, sizeof(seqE1));
+
+	writeCommand(ST7735_DISPON);        // Display on
+	MILLISEC_DELAY(500);
+}
+
+/*!
 	@brief: init routine for ST7735B controller
 */
 void ST7735_LTSM::Bcmd() {
@@ -381,24 +476,22 @@ void ST7735_LTSM::setScrollDefinition(uint8_t top_fix_heightTFT, uint8_t bottom_
 	writeData(bottom_fix_heightTFT);
 	writeCommand(ST7735_MADCTL);
 	if (_scroll_direction) {
-		if ((TFT_PCBtype == TFT_ST7735R_Red)  || (TFT_PCBtype == TFT_ST7735R_Green)) {
-			writeData(0xD8);
-		}
-		if (TFT_PCBtype == TFT_ST7735S_Black) {
-			writeData(0xD0);
-		}
-		if (TFT_PCBtype == TFT_ST7735B ) {
-			writeData(0x18);
+		switch (TFT_PCBtype)
+		{
+			case TFT_ST7735R_Red:
+			case TFT_ST7735R_Green:
+			case TFT_ST7735S_80160:  writeData(0xD8); break;
+			case TFT_ST7735S_Black:  writeData(0xD0); break;
+			case TFT_ST7735B:        writeData(0x18); break;
 		}
 	} else {
-		if (((TFT_PCBtype == TFT_ST7735R_Red)  || (TFT_PCBtype == TFT_ST7735R_Green))) {
-			writeData(0xC8);
-		}
-		if (TFT_PCBtype == TFT_ST7735S_Black) {
-			writeData(0xC0);
-		}
-		if (TFT_PCBtype == TFT_ST7735B ) {
-			writeData(0x08);
+		switch (TFT_PCBtype)
+		{
+			case TFT_ST7735R_Red:
+			case TFT_ST7735R_Green:
+			case TFT_ST7735S_80160:  writeData(0xC8); break;
+			case TFT_ST7735S_Black:  writeData(0xC0); break;
+			case TFT_ST7735B:        writeData(0x08); break;
 		}
 	}
 }
@@ -582,6 +675,7 @@ void ST7735_LTSM ::TFTInitPCBType(TFT_PCBtype_e pcbType)
 		case TFT_ST7735R_Green: TFTGreenTabInitialize(); break;
 		case TFT_ST7735S_Black: TFTBlackTabInitialize(); break;
 		case TFT_ST7735B : TFTST7735BInitialize(); break;
+		case TFT_ST7735S_80160: TFTST7735S80160Initialize(); break;
 	}
 }
 

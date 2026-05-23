@@ -1,11 +1,11 @@
 /*!
-	@file    HELLO_WORLD.ino
+	@file    HELLO_WORLD_128_160.ino
 	@author  Gavin Lyons
 	@brief   Example  file for arduino ST7735_LTSM library. Tests Hello World.
 	@details change 'bhardwareSPI'  to switch between hardware and software SPI.
-			 See USER OPTIONS 1-3 in SETUP function,
+			 		 See USER OPTIONS 1-3 in SETUP function,
 	@test
-		-# Test 100 write out Hello world, 128x128 pixel red tab display
+		-# Test 102 write out Hello world , 128x160 pixel 1.8 inch, black tab, display
 */
 
 // libraries 
@@ -41,14 +41,14 @@ void setup(void)
 	}
 //********************************************************
 // ****** USER OPTION 2 Screen Setup ****** 
-	uint8_t OFFSET_COL = 0;  // 2, These offsets can be adjusted for any issues->
-	uint8_t OFFSET_ROW = 0; // 3, with screen manufacture tolerance/defects
-	uint16_t TFT_WIDTH = 128;// Screen width in pixels
-	uint16_t TFT_HEIGHT = 128; // Screen height in pixels
-	myTFT.TFTInitScreenSize(OFFSET_COL, OFFSET_ROW , TFT_WIDTH , TFT_HEIGHT);
+	uint8_t  OFFSET_COL =   0;
+	uint8_t  OFFSET_ROW =   0;
+	uint16_t TFT_WIDTH  = 128;  // Screen width in pixels
+	uint16_t TFT_HEIGHT = 160; // Screen height in pixels
+	myTFT.TFTInitScreenSize(OFFSET_COL, OFFSET_ROW, TFT_WIDTH, TFT_HEIGHT);
 // ******************************************
 // ******** USER OPTION 3 PCB_TYPE  **************************
-	myTFT.TFTInitPCBType(myTFT.TFT_ST7735R_Red); // pass enum,multi choices,see README
+	myTFT.TFTInitPCBType(myTFT.TFT_ST7735S_Black); // pass enum,multi choices,see README
 //**********************************************************
   myTFT.setRotation(myTFT.Degrees_0);
 }
@@ -56,18 +56,18 @@ void setup(void)
 //   MAIN loop
 void  loop(void) 
 {
-	Test100();
+	Test102();
 	EndTests();
 }
 // *** End OF MAIN **
 
 // Function Space 
-void Test100(void) {
+void Test102(void) {
 	myTFT.fillScreen(myTFT.C_BLACK);
-	myTFT.setTextColor(myTFT.C_GREEN, myTFT.C_BLACK);
+	myTFT.setTextColor(myTFT.C_RED, myTFT.C_BLACK);
 	myTFT.setCursor(5,5);
 	myTFT.setFont(FontDefault);
-	myTFT.print("Hello World");
+	myTFT.print("Hello, world!");
 	delay(5000);
 	myTFT.fillScreen(myTFT.C_BLACK);
 	delay(1000);

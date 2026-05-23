@@ -3,9 +3,10 @@
 	@author Gavin Lyons
 	@brief  Example file for st7735 library. Arduino library ST7735_LTSM. Tests frame buffer mode
 	@note   See USER OPTIONS 1-3 in SETUP function
-					dislib16_ADVANCED_SCREEN_BUFFER_ENABLE must be enabled for this example
-					or it will not compile , uses vector , MCU cores which do not support vector 
-					will not compile( UNO R3)
+					dislib16_ADVANCED_SCREEN_BUFFER_ENABLE must be enabled for this example.
+					It is in file display16_common_LTSM.hpp in graphics library: Display16_LTSM.
+					USER OPTION 2 or it will not compile.
+					Uses vector , MCU cores which do not support vector will not compile( UNO R3)
 	@test
 		-# Test 1200 Frame buffer mode.
 */
@@ -55,7 +56,7 @@ void setup(void) {
 	myTFT.TFTInitScreenSize(OFFSET_COL, OFFSET_ROW, TFT_WIDTH, TFT_HEIGHT);
 	// ******************************************
 	// ******** USER OPTION 3 PCB_TYPE  **************************
-	myTFT.TFTInitPCBType(myTFT.TFT_ST7735R_Red);  // pass enum,4 choices,see README
+	myTFT.TFTInitPCBType(myTFT.TFT_ST7735R_Red);  // pass enum,multi choices,see README
 	//**********************************************************
 	if (myTFT.setBuffer() != DisLib16::Success) {
 		Serial.println("Set buffer failed");
