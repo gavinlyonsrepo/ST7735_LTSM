@@ -12,11 +12,12 @@
 * [Documentation](#documentation)
 * [Software](#software)
   * [Examples](#examples)
-  * [SPI](#spi)
+  * [Setup](#setup)
 * [Hardware](#hardware)
 * [Tested](#tested)
 * [Output](#output)
-* [Notes and Issues](#notes-and-issues)
+
+---
 
 ## Overview
 
@@ -34,25 +35,44 @@ C++ Library for a ST7735 TFT SPI LCD for the Arduino Eco-system.
 7. Hardware & software SPI options
 8. [Project url link](https://github.com/gavinlyonsrepo/ST7735_LTSM)
 
+---
+
 ## Installation
 
 The library is included in the official Arduino library manger and the optimum way to install it is using the library manager which can be opened by the *manage libraries* option in Arduino IDE.
 
+---
+
 ## Dependency
 
 This library requires the Arduino library 'display16_LTSM' as a dependency. display16_LTSM library contains
-the graphics, bitmaps, and font methods as well as font data and bitmap test data. Its also
-where the user sets options(debug, advanced graphics and frame buffer mode).
+the graphics, bitmaps, and font methods as well as font data and bitmap test data.
 When you install 'ST7735_LTSM' with Arduino IDE. It should install 'display16_LTSM' as well after
 a prompt, if it does not you have to install it same way as 'ST7735_LTSM'.
 The 'display16_LTSM' project and readme is at [URL github link.](https://github.com/gavinlyonsrepo/display16_LTSM)
 'display16_LTSM' is also written by author of this library.
+
+There are options in the dependency 'display16_LTSM' library which can be set by the user.
+These are set in the 'display16_LTSM' library's 'display16_common_LTSM.hpp' file.
+These options are referenced in note section of example files table.
+
+The options are:
+
+| Option | Description | Default |
+| --- | --- | --- |
+| dislib16_ADVANCED_GRAPHICS_ENABLE | Enable advanced graphics functions | OFF |
+| dislib16_ADVANCED_SCREEN_BUFFER_ENABLE | Enable advanced screen buffer mode | OFF |
+| dislib16_DEBUG_MODE_ENABLE | Enable debug messages to serial console | OFF |
+
+---
 
 ## Documentation
 
 Code is commented for the 'doxygen' API generation tool.
 Documents on fonts, bitmaps and graphics can be found at
 the dependency 'display16_LTSM' repository, [URL github link](https://github.com/gavinlyonsrepo/display16_LTSM)
+
+---
 
 ## Software
 
@@ -74,7 +94,7 @@ There are example files included.
 | DEMOS_3 | Vertical Gauges based on sin(x), cos(x), & sin(x)*cos(x). Updates over time to create a dynamic effect. | --- |
 | FRAME BUFFER | Testing frame Buffer mode | dislib16 ADVANCED SCREEN BUFFER ENABLE must be enabled user option 2 |
 
-### SPI
+### Setup
 
 In the example ino files. There are sections in "setup()" function
 where user can make adjustments to select for SPI type used, PCB type used and screen size.
@@ -83,7 +103,7 @@ where user can make adjustments to select for SPI type used, PCB type used and s
 2. USER OPTION 2 SCREEN SECTION
 3. USER OPTION 3 PCB_TYPE
 
-#### USER OPTION 1 GPIO SPI SPEED
+#### GPIO SPI Speed + type
 
 Two different constructors which one is called depends on 'bhardwareSPI',
 true for hardware spi, false for software SPI.
@@ -101,13 +121,13 @@ Setting this higher can be used to slow down Software SPI
 which may be beneficial on Fast MCU's.
 The 5 GPIO pins used. Any GPIO can be used for these.
 
-#### USER OPTION 2 Screen size  + Offsets
+#### Screen size + Offsets
 
 User can adjust screen pixel height, screen pixel width and x & y screen offsets.
 These offsets can be used in the event of screen damage or manufacturing errors around edge
 such as cropped data or defective pixels. The function TFTInitScreenSize sets them.
 
-#### USER OPTION 3 PCB Version
+#### PCB Version
 
 Select your PCB controller type by passing an enum type to function  TFTInitPCBType.
 Default is "TFT_ST7735R_Red".  If you select the wrong one if may still work but with inverted colors.
@@ -121,6 +141,8 @@ Default is "TFT_ST7735R_Red".  If you select the wrong one if may still work but
 | 5 | ST7735S 80x160 | TFT_ST7735S_80160 | Blue PCB .96 inch 80x160 pixels |
 
 The ST7735S 80x160 requires an offset of (26,1) or (24,0) depending on the screen. This is set in the example ino files for this screen at USER OPTION 2.
+
+---
 
 ## Hardware
 
@@ -143,6 +165,8 @@ Connections as setup in HELLO_WORLD.ino  test file.
 4. Pick any GPIO you like but on HW SPI mode SCLK and SDA will be tied to SPIO interface of MCU.
 5. Backlight on/off control is left to user.
 
+---
+
 ## Tested
 
 Tested with both software and hardware SPI on:
@@ -159,9 +183,9 @@ Compiled only (not fully hardware-tested) on:
 > Some examples on low-RAM MCUs will fail( insufficient memory ), numerous fonts and bitmap data are included.
 > Frame buffer mode requires sufficient dynamic memory for the buffer — see the README in display16_LTSM for details.
 
+---
+
 ## Output
 
 [![ Demo pic ](https://github.com/gavinlyonsrepo/ST7735_TFT_RPI/blob/main/extra/images/4.jpg)](https://github.com/gavinlyonsrepo/ST7735_TFT_RPI/blob/main/extra/images/4.jpg)
 [![ demo pic 2](https://github.com/gavinlyonsrepo/Display_Lib_RPI/blob/main/extra/images/st7735output.jpg)](https://github.com/gavinlyonsrepo/Display_Lib_RPI/blob/main/extra/images/st7735output.jpg)
-
-## Notes and Issues
