@@ -3,10 +3,10 @@
 	@author Gavin Lyons
 	@brief  Example file for st7735 library. Arduino library ST7735_LTSM. Tests frame buffer mode
 	@note   See USER OPTIONS 1-3 in SETUP function
-					dislib16_ADVANCED_SCREEN_BUFFER_ENABLE must be enabled for this example.
-					It is in file display16_common_LTSM.hpp in graphics library: Display16_LTSM.
-					USER OPTION 2 or it will not compile.
-					Uses vector , MCU cores which do not support vector will not compile( UNO R3)
+					dislib16_ADVANCED_SCREEN_BUFFER_ENABLE must be enabled for this example, 
+					or it will not compile.
+					It is in file display16_common_LTSM.hpp in graphics library: display16_LTSM,
+					USER OPTIONs, 
 	@test
 		-# Test 1200 Frame buffer mode.
 */
@@ -38,7 +38,7 @@ void setup(void) {
 	int8_t DC_TFT = 5;
 	int8_t RST_TFT = 4;
 	int8_t CS_TFT = 15;
-	if (bhardwareSPI == true) {       // hw spi
+	if (bhardwareSPI == true) {          // hw spi
 		uint32_t TFT_SCLK_FREQ = 8000000;  // Spi freq in Hertz
 		myTFT.setupGPIO_SPI(TFT_SCLK_FREQ, RST_TFT, DC_TFT, CS_TFT);
 	} else {                        // sw spi
@@ -58,13 +58,15 @@ void setup(void) {
 	// ******** USER OPTION 3 PCB_TYPE  **************************
 	myTFT.TFTInitPCBType(myTFT.TFT_ST7735R_Red);  // pass enum,multi choices,see README
 	//**********************************************************
-	if (myTFT.setBuffer() != DisLib16::Success) {
-		Serial.println("Set buffer failed");
-		while (1) {};
-	}
+  // set up buffer
+	// Set rotation BEFORE setBuffer(): the buffer is laid out for the display's
+	// current width and height. On a display where width != height, call
+	// setBuffer() again after every rotation change.
+	myTFT.setRotation(myTFT.Degrees_0);  // Degrees_0 is the default, shown for clarity
+	SetBuffer();
 	//  === important in Frame buffer mode  ===
 	myTFT.setTextCharPixelOrBuffer(true);  // set to use pixel mode for text
-	// ====
+	                                       // ====
 }
 
 
@@ -119,22 +121,24 @@ void TestRotate(void) {
 	Serial.println("Rotate");
 	myTFT.fillScreen(myTFT.C_BLACK);
 	myTFT.clearBuffer(myTFT.C_BLACK);
-	const char *rotationLabels[] = { "Rotate 0", "Rotate 90", "Rotate 180", "Rotate 270" };
+	const char *rotationLabels[] = { "Rotate 270", "Rotate 90", "Rotate 180", "Rotate 0" };
 	const decltype(myTFT.Degrees_0) rotations[] = {
-		myTFT.Degrees_0,
+		myTFT.Degrees_270,
 		myTFT.Degrees_90,
 		myTFT.Degrees_180,
-		myTFT.Degrees_270
+		myTFT.Degrees_0
 	};
 	for (int i = 0; i < 4; ++i) {
 		myTFT.setRotation(rotations[i]);
+		SetBuffer();  // reset buffer, needed if width != height
 		myTFT.setCursor(20, 20);
 		myTFT.print(rotationLabels[i]);
 		myTFT.setCursor(20, 100);
 		myTFT.print("Bottom");
-		ScreenReset();
+		myTFT.writeBuffer();
+		delay(2500);
 	}
-	myTFT.setRotation(myTFT.Degrees_0);
+
 	myTFT.TFTchangeMode(myTFT.TFT_Normal_mode);
 	ScreenReset();
 }
@@ -190,7 +194,7 @@ void TestBitmapFPS(void) {
 			lastFramerate = currentFramerate;
 			previousMillis = currentMillis;
 			seconds++;
-			if (seconds == 20)
+			if (seconds == 10)
 				break;
 		}
 		currentFramerate++;
@@ -246,7 +250,7 @@ void TestTextFPS(void) {
 			previousMillis = currentMillis;
 			seconds++;
 			//myTFT.clearBuffer(myTFT.C_BLACK);
-			if (count >= 1000) {
+			if (count >= 200) {
 				Serial.print("Seconds : ");
 				Serial.println(seconds);
 				Serial.print("Count : ");
@@ -273,6 +277,13 @@ void TestTextFPS(void) {
 		myTFT.println("testing");
 		myTFT.writeBuffer();
 		//  ****
+	}
+}
+
+void SetBuffer(void) {
+	if (myTFT.setBuffer() != DisLib16::Success) {
+		Serial.println("buffer not set");
+		while (1) {};
 	}
 }
 /// @endcond
